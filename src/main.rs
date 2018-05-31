@@ -1,3 +1,13 @@
+macro_rules! logo {
+    ($key: ident) => (
+        glutin::KeyboardInput {
+            virtual_keycode: Some(VirtualKeyCode::$key),
+            modifiers: glutin::ModifiersState { logo: true, .. },
+            ..
+        }
+    )
+}
+
 extern crate glutin;
 extern crate gl;
 extern crate nanovg;
@@ -13,6 +23,8 @@ use nanovg::{ StrokeOptions, Color, CompositeOperation, Gradient,
 
 use glutin::WindowEvent::KeyboardInput;
 use glutin::VirtualKeyCode;
+
+use glutin::WindowEvent;
 
 use chrono::prelude::*;
 
@@ -58,14 +70,15 @@ fn main() {
                 match event {
                     glutin::WindowEvent::Closed => running = false,
                     glutin::WindowEvent::Resized(w, h) => gl_window.resize(w, h),
-                    glutin::WindowEvent::KeyboardInput {
-                        input: glutin::KeyboardInput {
-                            virtual_keycode: Some(VirtualKeyCode::Q), modifiers: glutin::ModifiersState { logo: true, .. },
-                            .. },
-                        .. } => {
-
-                        running = false;
-                    }
+                    glutin::WindowEvent::KeyboardInput { input, .. } => {
+                        match input {
+                            logo!(Q) => { running = false; },
+                            logo!(R) => {
+                                // execute!
+                            },
+                            _ => {}
+                        }
+                    },
                     _ => {}
                 }
             },
